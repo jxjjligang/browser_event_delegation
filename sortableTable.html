@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 4px;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        th:hover {
+            background: yellow;
+        }
+    </style>
+</head>
+
+<body>
+
+    <table id="grid">
+        <thead>
+            <tr>
+                <th data-type="number">Age</th>
+                <th data-type="string">Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>5</td>
+                <td>John</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Pete</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td>Ann</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>Eugene</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Ilya</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        grid.onclick = function (event) {
+            if (event.target.tagName !== 'TH')
+                return;
+
+            if (!event.target.dataset.type)
+                return;
+
+            if (event.target.dataset.type !== 'number' && event.target.dataset.type !== 'string')
+                return;
+
+            let trs = Array.from(grid.getElementsByTagName('TR')).slice(1);
+            let ths = Array.from(grid.getElementsByTagName('TH'));
+            if (trs.length === 0 || ths.length === 0)
+                return;
+
+            let isNumber = event.target.dataset.type === 'number';
+            let thIndex = ths.indexOf(event.target);
+            console.log(thIndex);
+            let toBeSorted = [];
+            let mapColumnTextToTr = new Map();
+            trs.forEach(tr => {
+                let tds = Array.from(tr.getElementsByTagName('td'));
+                let tdValue = tds[thIndex].textContent;
+                if (isNumber)
+                    tdValue = parseInt(tdValue);
+
+                toBeSorted.push(tdValue);
+                mapColumnTextToTr[tdValue] = tr;
+            });
+            if (isNumber)
+                toBeSorted.sort(compareNumbers);
+            else
+                toBeSorted.sort();
+            toBeSorted.forEach(value => {
+                grid.appendChild(mapColumnTextToTr[value]);
+            })
+        }
+
+        function compareNumbers(a, b) {
+            return a - b;
+        }
+    </script>
+
+</body>
+
+</html>
