@@ -39,25 +39,32 @@
         let mapTooltipToDiv = new Map();
 
         document.body.onmouseover = function (event) {
-            if (event.target.tagName !== 'BUTTON')
-                return;
-
             if (!event.target.dataset.tooltip)
                 return;
 
             let tooltip = event.target.dataset.tooltip;
-            if (mapTooltipToDiv.has(tooltip))
+            if (mapTooltipToDiv.has(tooltip)) {
                 mapTooltipToDiv.get(tooltip).hidden = false;
+                setTooltipPosition(mapTooltipToDiv.get(tooltip), event.target);
+            }
             else {
                 let div = document.createElement('div');
-                div.textContent = tooltip;
+                div.innerHTML = tooltip;
                 document.body.appendChild(div);
                 div.className = 'tooltip';
-                div.left = event.target.clientLeft;
-                div.top = event.target.clientTop;
+                setTooltipPosition(div, event.target);
                 mapTooltipToDiv.set(tooltip, div);
             }
+        }
 
+        function setTooltipPosition(div, anchor) {
+            let rect = anchor.getBoundingClientRect();
+            div.style.left = rect.left + 'px';
+            if (rect.top > div.offsetHeight)
+                div.style.top = rect.top - div.offsetHeight + 'px';
+            else {
+                div.style.top = rect.top + anchor.offsetHeight + 'px';
+            }
         }
 
         document.body.onmouseout = function (event) {
